@@ -1,109 +1,36 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Image based tracking AR.js demo</title>
-    <!-- import aframe and then ar.js with image tracking / location based features -->
-    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-extras@3.3.0/dist/aframe-extras.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-    <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
-
-    <script>
-      // Define a few custom components useful for AR mode. While these are somewhat reusable,
-      // I recommend checking if there are officially supported alternatives before copying
-      // these into new projects.
-    
-      // See also https://github.com/aframevr/aframe/pull/4356
-      AFRAME.registerComponent('hide-in-ar-mode', {
-        // Set this object invisible while in AR mode.
-        init: function () {
-          this.el.sceneEl.addEventListener('enter-vr', (ev) => {
-            this.wasVisible = this.el.getAttribute('visible');
-            if (this.el.sceneEl.is('ar-mode')) {
-              this.el.setAttribute('visible', false);
-            }
-          });
-          this.el.sceneEl.addEventListener('exit-vr', (ev) => {
-            if (this.wasVisible) this.el.setAttribute('visible', true);
-          });
-        }
-      });
-      
-      AFRAME.registerComponent('ar-shadows', {
-        // Swap an object's material to a transparent shadows-only material while
-        // in AR mode. Intended for use with a ground plane. The object is also
-        // set visible while in AR mode, this is useful if it's hidden in other
-        // modes due to them using a 3D environment.
-        schema: {
-          opacity: {default: 0.3}
-        },
-        init: function () {
-          this.el.sceneEl.addEventListener('enter-vr', (ev) => {
-            this.wasVisible = this.el.getAttribute('visible');
-            if (this.el.sceneEl.is('ar-mode')) {
-              this.savedMaterial = this.el.object3D.children[0].material;
-              this.el.object3D.children[0].material = new THREE.ShadowMaterial();
-              this.el.object3D.children[0].material.opacity = this.data.opacity;
-              this.el.setAttribute('visible', true);
-            }
-          });
-          this.el.sceneEl.addEventListener('exit-vr', (ev) => {
-            if (this.savedMaterial) {
-              this.el.object3D.children[0].material = this.savedMaterial;
-              this.savedMaterial = null;
-            }
-            if (!this.wasVisible) this.el.setAttribute('visible', false);
-          });
-        }
-      });    
-  </script>
-    <!-- style for the loader -->
-    <style>
-      .arjs-loader {
-        height: 100%;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: rgba(0, 0, 0, 0.8);
-        z-index: 9999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .arjs-loader div {
-        text-align: center;
-        font-size: 1.25em;
-        color: white;
-      }
-    </style>
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
   </head>
+  //AFrame
+  <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  //img recognition
+  <script src="https://unpkg.com/aframe-extras@3.3.0/dist/aframe-extras.min.js"></script>
+  //object events
+  <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
 
-  <body style="margin : 0px; overflow: hidden;">
-    <!-- minimal loader shown until image descriptors are loaded. Loading may take a while according to the device computational power -->
-    <div class="arjs-loader">
-      <div>Loading, please wait...</div>
-    </div>
+  
 
-    <!-- a-frame scene -->
-    <a-scene
-      vr-mode-ui="enabled: false;"
-      renderer="logarithmicDepthBuffer: true;"
-      embedded
-      arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;">
-      <!-- a-nft is the anchor that defines an Image Tracking entity -->
-      <!-- on 'url' use the path to the Image Descriptors created before. -->
-      <!-- the path should end with the name without the extension e.g. if file is trex.fset' the path should end with trex -->
-      <a-nft
+  <a-scene log="Hello Scene">
+    <a-box id="redBox" class="clickable" color="red" 
+           event-set__enter="_event: mouseenter; _target: #redBoxInfo; visible: true"
+           event-set__leave="_event: mouseleave; _target: #redBoxInfo; visible: false" 
+           position="0 0 -2"></a-box>
+    
+    <a-entity light="type: ambient"></a-entity>
+    <a-entity light="type: directional"></a-entity>
+    
+    <a-nft
         type="nft"
         url="painting"
         smooth="true"
-        smoothCount="10"
-        smoothTolerance=".01"
-        smoothThreshold="5">
+        smoothcount="10"
+        smoothtolerance=".01"
+        smooththreshold="5">
           <!-- as a child of the a-nft entity, you can define the content to show. here's a GLTF model entity -->
           <a-entity
           gltf-model="https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf"
@@ -112,6 +39,21 @@
           >
           </a-entity>
       </a-nft>
-    </a-scene>
-  </body>
+    
+    <a-camera>
+      <a-cursor></a-cursor>
+      <a-entity  id="redBoxInfo" text__text_element="value: name : Paul\ncontact : paul@silverboxit.pl; color: #000" position="0.17085 0.18927 -1.1629" ></a-entity>
+    <!-- Or <a-entity cursor></a-entity> -->
+    </a-camera>
+  </a-scene>
+  
+  <script>
+    
+    var sceneEl = document.querySelector('a-scene');
+    sceneEl.querySelector('#redBoxInfo').object3D.visible = false;
+    // document.querySelector('#redBox').addEventListener("click", function(evt) {
+    //   console.log("This 2D element was clicked!");
+    //   sceneEl.querySelector('#redBoxInfo').object3D.visible = true;
+    // });
+  </script>
 </html>
