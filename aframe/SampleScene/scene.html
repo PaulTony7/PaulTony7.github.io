@@ -122,12 +122,16 @@ if (markerFound == 1) {
 </a-assets>
 <!-- END: Unity Compiled Assets -->
 <!-- BEGIN: Add Image Target (marker) -->
-<a-marker id="marker" preset="hiro" emitevents="true" button>
+<a-marker id="marker" type="pattern" preset="custom" src="pattern-puffin.patt" url="pattern-puffin.patt" emitevents="true" button>
 <!-- END: Add Image Target (marker) -->
 
 <!-- BEGIN: Unity Compiled Objects -->
 <a-video width="1" height="1" src="#Video_Asset_0" class="intersectable" position="0 0.544 -0.29" rotation="0 0 0" color="#FFFFFF" 
 ></a-video>
+<a-box width="0.1" height="0.1" depth="0.1" class="intersectable" position="-0.407 0.33 0.419" rotation="0 0 0" color="#FFFFFF" 
+></a-box>
+<a-cylinder radius="0.211" height="0.2" class="intersectable" position="0.419 0.47 0.628" rotation="0 0 0" color="#FFFFFF" 
+></a-cylinder>
 <!-- END: Unity Compiled Objects -->
 
 <!-- BEGIN: Bottom HTML -->
